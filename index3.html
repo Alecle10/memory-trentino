@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Memory Senior</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  background: 
+    linear-gradient(rgba(255,255,255,0.70), rgba(255,255,255,0.70)),
+    url('img/Luoghi/Borgo.JPG'); /* nuovo gradiente */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+h1,h2 {
+  margin:8px;
+  text-align:center;
+  font-weight:600;
+  color:#333;
+}
+
+h1 {
+  margin: 16px 0 8px 0;
+  font-size: 3.5rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+}
+
+h2 {
+  font-size: 1.8rem;
+}
+
+#menuStart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  margin-top: 60px;
+}
+
+#menuStart button {
+  width: 260px;
+  padding: 20px 0;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg,#4CAF50,#2f7c3b);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+}
+#menuStart button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+  filter: brightness(1.1);
+}
+#menuStart button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.2);
+}
+
+#timer {
+  display: inline-block;
+  margin: 12px auto;
+  padding: 6px 12px;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+}
+
+
+.card {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  perspective: 1000px;
+}
+
+.card-inner {
+  width:100%; 
+  height:100%; 
+  position:relative; 
+  transition: transform 0.6s cubic-bezier(.17,.67,.48,1.28);
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position:absolute; 
+  width:100%; 
+  height:100%; 
+  backface-visibility:hidden; 
+  border-radius:12px; 
+  display:flex; 
+  align-items:center; 
+  justify-content:center;
+}
+
+.card-front {
+  background: linear-gradient(135deg, #4CAF50, #81C784); /* retro standard */
+  font-size: 2rem;
+  font-weight: bold;
+  color:white;
+}
+
+.card-back {
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden; /* nasconde ciò che esce dal quadrato */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  background-color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card-back img {
+  transform: rotateY(0deg);  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+#victoryMessage {
+  display:none;
+  font-size:2.8rem;
+  color:#ff5722;
+  margin:16px 0;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+}
+
+button {
+  margin-top:12px;
+  padding:10px 20px;
+  font-size:1rem;
+  border-radius:8px;
+  cursor:pointer;
+  border:none;
+  background: linear-gradient(135deg,#ff7e5f,#feb47b);
+  color:white;
+  font-weight:600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+#content {
+  display: none; 
+  gap: 60px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+#gameArea, #content {
+  width: 100%;
+  max-width: 480px;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+#hallOfFame {
+  background: rgba(255,255,255,0.9);
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  border: 2px solid #ccc;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+  margin-bottom: 50px;
+}
+
+#recordsList li {
+  padding: 6px;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #eee;
+}
+
+#recordsList li:first-child {
+  font-weight: bold;
+  color: #D4AF37;
+}
+
+#infoBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg,#4CAF50,#2f7c3b);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#infoPopup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+
+  width: 250px;
+  padding: 16px;
+
+  background: rgba(255,255,255,0.95);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+
+  transform: translateY(120%);
+  transition: transform 0.4s ease;
+  z-index: 1000;
+
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* aggiungi queste regole al tuo <style> */
+body.bg-cibo {
+  background: 
+    linear-gradient(rgba(255,255,255,0.70), rgba(255,255,255,0.70)),
+    url('img/Cibi_tipici/Luganeghe.JPG'); /* nuovo gradiente */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+body.bg-animali {
+  background: 
+    linear-gradient(rgba(255,255,255,0.70), rgba(255,255,255,0.70)),
+    url('img/Animali/Capriolo.jpg'); /* nuovo gradiente */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+body.bg-luoghi {
+  background: 
+    linear-gradient(rgba(255,255,255,0.70), rgba(255,255,255,0.70)),
+    url('img/Luoghi/Telve.JPG'); /* nuovo gradiente */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+body.bg-piante {
+  background:
+    linear-gradient(rgba(255,255,255,0.70), rgba(255,255,255,0.70)),
+    url('img/Piante/rododendro.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+#backToMenu {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(135deg,#ff7e5f,#feb47b);
+  color: white;
+
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#backToMenu:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+}
+
+/* nascosto nel menu iniziale */
+#menuStart ~ #backToMenu {
+  display: none;
+}
+
+
+</style>
+</head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body>
+
+<button id="backToMenu" title="Torna al menu" style="font-size: 1.2em;">⬅ Menu</button>
+
+<h1 style="margin-top: 4%; font-size: 5em;">IL MEMORY TRENTINO</h1>
+
+<div id="menuStart" style="margin-top: 0;">
+  <h2 style="font-size: 2.5em;">Scegli il Memory</h2>
+  <button onclick="startSet('Cibo')">Cibo</button>
+  <button onclick="startSet('Animali')">Animali</button>
+  <button onclick="startSet('Luoghi')">Paesaggi</button>
+  <button onclick="startSet('Piante')">Piante</button>
+</div>
+
+<h2 id="timer">Tempo: 0s</h2>
+
+<div id="victoryMessage">🎉 HAI VINTO! 🎉</div>
+
+<div id="content">
+  <div id="gameArea">
+    <div id="grid" class="grid"></div>
+    <button id="restart" style="margin-left: 35%; font-size: 1.2em;">Ricomincia</button>
+  </div>
+
+  <div id="hallOfFame">
+    <h2>🏆 I MEIO</h2>
+    <ul id="recordsList"></ul>
+    <button id="clearRecords">Cancella Record</button>
+  </div>
+</div>
+
+<button id="infoBtn">?</button>
+
+<div id="infoPopup">
+  <h2>Crediti</h2>
+  <p style="margin: 0; font-size: 1em;">Memory creato da <strong>Istituto Alcide Degasperi</strong></p>
+  <p style="margin: 0; font-size: 1em;">Immagini: Google</p>
+  <p style="margin: 0; font-size: 1em;">Si ringraziano <strong>Avancini Lorenzo, Clerici Alessandro e Sanna Alessio</strong></p>
+  <button id="closeInfo">Chiudi</button>
+</div>
+
+
+
+
+
+
+<script>
+
+const backBtn = document.getElementById('backToMenu');
+
+// all'inizio il bottone è nascosto
+backBtn.style.display = 'none';
+
+backBtn.onclick = () => {
+  if (!confirm("Vuoi tornare al menu? La partita in corso verrà persa.")) return;
+
+  stopTimer();
+
+  // reset gioco
+  grid.innerHTML = '';
+  victoryMessage.style.display = 'none';
+
+  // mostra menu iniziale
+  document.getElementById("menuStart").style.display = "flex";
+  document.getElementById("content").style.display = "none";
+  document.getElementById("timer").style.display = "none";
+
+  // rimuove sfondi categoria
+  document.body.classList.forEach(c => {
+    if (c.startsWith('bg-')) document.body.classList.remove(c);
+  });
+
+  backBtn.style.display = 'none';
+};
+
+
+const sets = {
+  Cibo: [
+    { name: 'Polenta', img: 'img/Cibi_tipici/Polenta.JPG' },
+    { name: 'Canederli', img: 'img/Cibi_tipici/Canederli.JPG' },
+    { name: 'Crauti', img: 'img/Cibi_tipici/Crauti.JPG' },
+    { name: 'Fonghi', img: 'img/Cibi_tipici/Fonghi.JPG' },
+    { name: 'Luganeghe', img: 'img/Cibi_tipici/Luganeghe.JPG' },
+    { name: 'Mosa', img: 'img/Cibi_tipici/Mosa.JPG' },
+    { name: 'Scodeghin', img: 'img/Cibi_tipici/Scodeghin.JPG' },
+    { name: 'Smacafam', img: 'img/Cibi_tipici/Smacafam.JPG' }
+  ],
+  Luoghi: [
+    { name: 'Levico', img: 'img/Luoghi/Levico.JPG' },
+    { name: 'Borgo', img: 'img/Luoghi/Borgo.JPG' },
+    { name: 'Roncegno', img: 'img/Luoghi/Roncegno.JPG' },
+    { name: 'Trento', img: 'img/Luoghi/Trento.JPG' },
+    { name: 'Telve', img: 'img/Luoghi/Telve.JPG' },
+    { name: 'Castel Ivano', img: 'img/Luoghi/Castel_ivano.JPG' },
+    { name: 'Castello Buonconsiglio', img: 'img/Luoghi/Castello_buonconsiglio.JPG' },
+    { name: 'Castel Beseno', img: 'img/Luoghi/Castel_beseno.JPG' }
+  ],
+  Animali: [
+    { name: 'Camosci', img: 'img/Animali/Camoscio.jpg' },
+    { name: 'Capriolo', img: 'img/Animali/Capriolo.jpg' },
+    { name: 'Lupo', img: 'img/Animali/Lupo.jpg' },
+    { name: 'Pecora', img: 'img/Animali/Pecora.jpg' },
+    { name: 'Marmotta', img: 'img/Animali/Marmotta.jpg' },
+    { name: 'Scoiattolo', img: 'img/Animali/Scoiattolo.jpg' },
+    { name: 'Gallo cedrone', img: 'img/Animali/Gallo_cedrone.jpg' },
+    { name: 'Mucca', img: 'img/Animali/Mucca.jpg' }
+  ],
+  Piante: [
+    { name: 'Genzianella', img: 'img/Piante/genzianella.jpg', text: 'Genzianella' },
+    { name: 'Stella alpina', img: 'img/Piante/stellalpina.jpg', text: 'Stella alpina' },
+    { name: 'Mele', img: 'img/Piante/mele.jpg', text: 'Pomi' },
+    { name: 'Mirtilli', img: 'img/Piante/mirtilli.jpg', text: 'Giaseni' },
+    { name: 'Bottondoro', img: 'img/Piante/bottondoro.jpg', text: "Botton d'oro" },
+    { name: 'Rododendro', img: 'img/Piante/rododendro.jpg', text: 'Rododendri' },
+    { name: 'Uva', img: 'img/Piante/uva.jpg', text: 'Uva' },
+    { name: 'Prugne', img: 'img/Piante/prugne.jpg', text: 'Brugne' }
+  ]
+};
+
+let cardsData = [];
+let currentSet = '';
+
+function slug(s) {
+  return s.toLowerCase().replace(/\s+/g,'-').replace(/[^\w-]/g,'');
+}
+
+function applyBackgroundForSet(key) {
+  // rimuove eventuali classi bg-*
+  document.body.classList.forEach(c => {
+    if(c.startsWith('bg-')) document.body.classList.remove(c);
+  });
+  // aggiunge la nuova
+  document.body.classList.add('bg-' + slug(key));
+}
+
+// poi nella startSet:
+function startSet(key) {
+  currentSet = key;
+  cardsData = sets[key];
+
+  applyBackgroundForSet(key);
+
+  document.getElementById("menuStart").style.display = "none";
+  document.getElementById("content").style.display = "flex";
+  document.getElementById("timer").style.display = "block";
+
+  backBtn.style.display = 'block';
+
+  loadRecords(); // carica i record della categoria selezionata
+  initGame();
+}
+
+
+
+let grid = document.getElementById('grid');
+let timerDisplay = document.getElementById('timer');
+let victoryMessage = document.getElementById('victoryMessage');
+let restartBtn = document.getElementById('restart');
+
+let first = null, second = null, lock = false, matches = 0, seconds = 0, timerInterval = null, timerStarted = false;
+
+const flipSound = new Audio('sounds/flip.mp3');
+const matchSound = new Audio('sounds/match.mp3');
+const winSound = new Audio('sounds/win.mp3');
+
+function playSound(s){ s.currentTime = 0; s.play(); }
+
+function startTimer() {
+  stopTimer();
+  timerInterval = setInterval(() => {
+    seconds++;
+    timerDisplay.textContent = `Tempo: ${seconds}s`;
+  }, 1000);
+  timerStarted = true;
+}
+
+function stopTimer() {
+  if(timerInterval) clearInterval(timerInterval);
+  timerStarted = false;
+}
+
+function saveRecord(name, time) {
+  if(!currentSet) return; // sicurezza
+
+  let key = 'records_' + currentSet;
+  let records = JSON.parse(localStorage.getItem(key)) || [];
+
+  records.push({ name, time });
+
+  // ordina dal tempo migliore
+  records.sort((a,b) => a.time - b.time);
+
+  // tieni solo i primi 10
+  records = records.slice(0, 10);
+
+  localStorage.setItem(key, JSON.stringify(records));
+}
+
+
+function loadRecords() {
+  if(!currentSet) return; // sicurezza
+
+  let key = 'records_' + currentSet;
+  let records = JSON.parse(localStorage.getItem(key)) || [];
+
+  let list = document.getElementById('recordsList');
+  list.innerHTML = "";
+
+  if(records.length === 0) {
+    let li = document.createElement('li');
+    li.textContent = "Nessun record ancora!";
+    list.appendChild(li);
+    return;
+  }
+
+  records.forEach((r, i) => {
+    let li = document.createElement('li');
+    li.textContent = `${i + 1}) ${r.name} - ${r.time}s`;
+    list.appendChild(li);
+  });
+}
+
+
+function clearRecords() {
+  if(!currentSet) return;
+
+  if(confirm("Vuoi cancellare tutti i record di questa modalità?")) {
+    let key = 'records_' + currentSet;
+    localStorage.removeItem(key);
+    loadRecords();
+  }
+}
+
+document.getElementById('clearRecords').onclick = clearRecords;
+
+
+let gameReady = false;
+
+function initGame() {
+  gameReady = false;
+  grid.innerHTML = '';
+  first = second = null;
+  lock = false;
+  matches = 0;
+  seconds = 0;
+  timerDisplay.textContent = 'Tempo: 0s';
+  victoryMessage.style.display = 'none';
+  stopTimer();
+
+  let deck = [];
+
+  if(currentSet === 'Piante') {
+    // metà immagini, metà testo
+    cardsData.forEach(c => deck.push({type:'img', name:c.name, content:c.img}));
+    cardsData.forEach(c => deck.push({type:'text', name:c.name, content:c.text}));
+  } else {
+    deck = [...cardsData, ...cardsData].map(c => ({type:'img', name:c.name, content:c.img}));
+  }
+
+  deck.sort(() => Math.random() - 0.5);
+
+  deck.forEach(card => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.dataset.name = card.name;
+
+    const inner = document.createElement('div');
+    inner.className = 'card-inner';
+
+    const front = document.createElement('div');
+    front.className = 'card-front';
+    front.textContent = ''; // retro generico
+
+    const back = document.createElement('div');
+    back.className = 'card-back';
+    if(card.type === 'img') {
+      back.innerHTML = `<img src="${card.content}" alt="${card.name}">`;
+    } else {
+      back.textContent = card.content;
+    }
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    el.appendChild(inner);
+
+    el.onclick = () => {
+      if(!gameReady || lock || el === first || el.classList.contains('flipped')) return;
+
+      if(!timerStarted) startTimer();
+
+      playSound(flipSound);
+      el.classList.add('flipped');
+
+      if(!first) { 
+        first = el; 
+        return; 
+      }
+
+      second = el;
+      lock = true;
+
+      if(first.dataset.name === second.dataset.name) {
+        playSound(matchSound);
+        matches++;
+        first = second = null;
+        lock = false;
+
+        if(matches === cardsData.length) {
+          stopTimer();
+          playSound(winSound);
+          victoryMessage.style.display = 'block';
+
+          let name = prompt("Hai vinto! Inserisci il tuo nome:");
+          if(!name || !name.trim()) name = "Anonimo";
+
+          saveRecord(name, seconds);
+          loadRecords();
+
+          document.querySelectorAll('.card').forEach(c => c.style.pointerEvents = "none");
+        }
+      } else {
+        setTimeout(() => {
+          first.classList.remove('flipped');
+          second.classList.remove('flipped');
+          first = second = null;
+          lock = false;
+        }, 900);
+      }
+    };
+
+
+    grid.appendChild(el);
+  });
+
+  setTimeout(() => {
+    gameReady = true; // ora il gioco è pronto e accetta click
+  }, 400); // 400ms corrispondono alla durata dell'animazione flip
+
+}
+
+document.getElementById('clearRecords').onclick = clearRecords;
+loadRecords();
+
+restartBtn.onclick = () => {
+  stopTimer();
+  initGame();
+};
+
+document.getElementById('infoBtn').onclick = () => {
+  document.getElementById('infoPopup').style.transform = 'translateY(0)';
+};
+
+document.getElementById('closeInfo').onclick = () => {
+  document.getElementById('infoPopup').style.transform = 'translateY(120%)';
+};
+
+
+
+document.getElementById("timer").style.display = "none";
+</script>
+</body>
+</html>
+
