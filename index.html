@@ -595,6 +595,13 @@ let gameReady = false;
 
 function initGame() {
   gameReady = false;
+
+  gameReady = false;
+
+  setTimeout(() => {
+    gameReady = true; // ora si possono cliccare le carte
+  }, 700); 
+  
   grid.innerHTML = '';
   first = second = null;
   lock = false;
@@ -641,48 +648,60 @@ function initGame() {
     el.appendChild(inner);
 
     el.onclick = () => {
-      if(!gameReady || lock || el === first || el.classList.contains('flipped')) return;
-
-      if(!timerStarted) startTimer();
-
-      playSound(flipSound);
-      el.classList.add('flipped');
-
-      if(!first) { 
-        first = el; 
-        return; 
-      }
-
-      second = el;
-      lock = true;
-
-      if(first.dataset.name === second.dataset.name) {
-        playSound(matchSound);
-        matches++;
-        first = second = null;
-        lock = false;
-
-        if(matches === cardsData.length) {
-          stopTimer();
-          playSound(winSound);
-          victoryMessage.style.display = 'block';
-
-          let name = prompt("Hai vinto! Inserisci il tuo nome:");
-          if(!name || !name.trim()) name = "Anonimo";
-
-          saveRecord(name, seconds);
-          loadRecords();
-
-          document.querySelectorAll('.card').forEach(c => c.style.pointerEvents = "none");
+        // Blocca click se il gioco non è pronto, se c'è già lock, se clicchi la stessa carta o carta già girata
+        if(!gameReady || lock || el === first || el.classList.contains('flipped')) return;
+      
+        // Avvia il timer al primo click
+        if(!timerStarted) startTimer();
+      
+        // Suono flip e gira la carta
+        playSound(flipSound);
+        el.classList.add('flipped');
+      
+        // Se è la prima carta selezionata
+        if(!first) {
+          first = el;
+          return;
         }
-      } else {
-        setTimeout(() => {
-          first.classList.remove('flipped');
-          second.classList.remove('flipped');
+      
+        // Se è la seconda carta selezionata
+        second = el;
+        lock = true; // blocca altri click fino a gestione
+      
+        // Controlla se è match
+        if(first.dataset.name === second.dataset.name) {
+          playSound(matchSound);
+          matches++;
+          
+          // reset variabili
           first = second = null;
           lock = false;
-        }, 900);
-      }
+      
+          // Controlla se il gioco è finito
+          if(matches === cardsData.length) {
+            stopTimer();
+            playSound(winSound);
+            victoryMessage.style.display = 'block';
+      
+            let name = prompt("Hai vinto! Inserisci il tuo nome:");
+            if(!name || !name.trim()) name = "Anonimo";
+      
+            saveRecord(name, seconds);
+            loadRecords();
+      
+            // blocca click sulle carte
+            document.querySelectorAll('.card').forEach(c => c.style.pointerEvents = "none");
+          }
+      
+        } else {
+          // Se non è match, gira le carte indietro dopo un breve ritardo
+          setTimeout(() => {
+            if(first) first.classList.remove('flipped');
+            if(second) second.classList.remove('flipped');
+            first = second = null;
+            lock = false;
+          }, 900);
+        }
     };
 
 
