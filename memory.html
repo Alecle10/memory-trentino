@@ -1,0 +1,1154 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Memory Senior</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.45),
+          rgba(255, 255, 255, 0.45)),
+        url('img/Borgo.JPG');
+
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    h1,
+    h2 {
+      margin: 8px;
+      text-align: center;
+      font-weight: 600;
+      color: #333;
+    }
+
+    h1 {
+      margin: 16px 0 8px 0;
+      font-size: 3.5rem;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      font-size: 1.8rem;
+    }
+
+    #backBtn {
+      display: none;
+    }
+
+    #menuStart {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+      margin-top: 20px;
+    }
+
+    #menuGrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    #menuGrid button {
+      padding: 28px 12px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #4CAF50, #2f7c3b);
+      color: white;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.25);
+      transition: all 0.25s ease;
+    }
+
+    #menuGrid button {
+      padding: 70px 20px;
+      font-size: 2.2rem;
+      font-weight: 800;
+      border-radius: 24px;
+      min-height: 160px;
+      width: 100%;
+      letter-spacing: 1px;
+    }
+
+    #menuGrid button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+      filter: brightness(1.1);
+    }
+
+    #menuStart button {
+      width: 260px;
+      padding: 20px 0;
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #4CAF50, #2f7c3b);
+      color: white;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.25);
+      transition: all 0.25s ease;
+    }
+
+    #menuStart button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+      filter: brightness(1.1);
+    }
+
+    #menuStart button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #timer {
+      display: inline-block;
+      margin: 12px auto;
+      padding: 6px 12px;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(60px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .card {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.6s cubic-bezier(.17, .67, .48, 1.28);
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #4CAF50, #81C784);
+      /* retro standard */
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .card-back {
+      backface-visibility: hidden;
+      transform: rotateY(180deg);
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      /* nasconde ciò che esce dal quadrato */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backface-visibility: hidden;
+      background-color: #fff;
+    }
+
+    .card-back img {
+      transform: rotateY(0deg);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: auto;
+      height: 100%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+
+
+    button {
+      margin-top: 12px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      color: white;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #content {
+      display: none;
+      flex-direction: row;
+      gap: 40px;
+      align-items: flex-start;
+      justify-content: center;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    #gameArea,
+    #content {
+      width: 100%;
+      padding: 0 12px;
+      box-sizing: border-box;
+    }
+
+    #gameArea,
+    #hallOfFame {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #hallOfFame {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 12px;
+      width: 240px;
+      border: 2px solid #ccc;
+      text-align: center;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+      height: 100%;
+    }
+
+    #gameArea {
+      flex: 3;
+      max-width: 800px;
+    }
+
+    #hallOfFame {
+      flex-shrink: 0;
+    }
+
+    #recordsList li {
+      padding: 6px;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    #recordsList li:first-child {
+      font-weight: bold;
+      color: #D4AF37;
+    }
+
+    #infoBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #4CAF50, #2f7c3b);
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    #infoPopup {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 250px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      padding: 16px;
+      z-index: 1000;
+
+      transform: translateY(120%);
+      transition: transform 0.4s ease;
+    }
+
+    #infoBtn {
+      transition: opacity 0.25s ease;
+    }
+
+
+
+    #timerBox {
+      margin: 15px 0;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    #timerBox h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    #timer {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 100%;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 1024px) {
+
+      #content {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #gameArea {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .grid {
+        width: 100%;
+        max-width: 500px;
+      }
+
+      #hallOfFame {
+        width: 100%;
+        max-width: 500px;
+      }
+
+      h1 {
+        margin-top: 90px;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      #menuGrid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      #menuGrid button {
+        min-height: 140px;
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #menuGrid {
+        grid-template-columns: 1fr;
+      }
+
+      #menuGrid button {
+        min-height: 110px;
+        font-size: 1.5rem;
+      }
+    }
+
+    #backBtn,
+    #restart {
+      position: fixed;
+      top: 20px;
+      /* stessa altezza */
+      padding: 10px 16px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      z-index: 1000;
+    }
+
+    /* sinistra */
+    #backBtn {
+      left: 20px;
+    }
+
+    /* destra */
+    #restart {
+      right: 20px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+
+
+  <div id="infoPopup">
+    <h3>Crediti</h3>
+    <p>Memory creato da <strong>Istituto Alcide Degasperi</strong></p>
+    <p>Immagini: Google e altro</p>
+    <p>Si ringraziano <strong>gli studenti di 4^ Scienze Applicate</strong></p>
+    <button id="closeInfo">Chiudi</button>
+  </div>
+
+  <button id="backBtn">← Indietro</button>
+
+  <h1>IL MEMORY TRENTINO</h1>
+
+  <div id="menuStart">
+    <h2>Scegli il Memory</h2>
+    <div id="menuGrid"></div>
+  </div>
+
+  <button id="infoBtn">?</button>
+
+  <div id="content">
+    <div id="gameArea" style="margin-bottom: 50px;">
+      <div id="grid" class="grid"></div>
+      <button id="restart">Ricomincia</button>
+    </div>
+
+    <div id="hallOfFame">
+
+      <div id="timerBox">
+        <h3>⏱ Tempo</h3>
+        <div id="timer">0s</div>
+      </div>
+
+      <hr>
+
+      <h2>🏆 I MEIO</h2>
+      <ul id="recordsList"></ul>
+      <button id="clearRecords">Cancella Record</button>
+    </div>
+
+
+    <script>
+      const sets = {
+        /*Cibo: [
+          { name: 'Polenta', img: 'img/Cibi_tipici/Polenta.JPG' },
+          { name: 'Canederli', img: 'img/Cibi_tipici/Canederli.JPG' },
+          { name: 'Crauti', img: 'img/Cibi_tipici/Crauti.JPG' },
+          { name: 'Fonghi', img: 'img/Cibi_tipici/Fonghi.JPG' },
+          { name: 'Luganeghe', img: 'img/Cibi_tipici/Luganeghe.JPG' },
+          { name: 'Mosa', img: 'img/Cibi_tipici/Mosa.JPG' },
+          { name: 'Scodeghin', img: 'img/Cibi_tipici/Scodeghin.JPG' },
+          { name: 'Smacafam', img: 'img/Cibi_tipici/Smacafam.JPG' }
+        ],
+        Luoghi: [
+          { name: 'Levico', img: 'img/Luoghi/Levico.JPG' },
+          { name: 'Borgo', img: 'img/Luoghi/Borgo.JPG' },
+          { name: 'Roncegno', img: 'img/Luoghi/Roncegno.JPG' },
+          { name: 'Trento', img: 'img/Luoghi/Trento.JPG' },
+          { name: 'Telve', img: 'img/Luoghi/Telve.JPG' },
+          { name: 'Castel Ivano', img: 'img/Luoghi/Castel_ivano.JPG' },
+          { name: 'Castello Buonconsiglio', img: 'img/Luoghi/Castello_buonconsiglio.JPG' },
+          { name: 'Castel Beseno', img: 'img/Luoghi/Castel_beseno.JPG' }
+        ],
+        Animali: [
+          { name: 'Camosci', img: 'img/Animali/Camoscio.jpg' },
+          { name: 'Capriolo', img: 'img/Animali/Capriolo.jpg' },
+          { name: 'Lupo', img: 'img/Animali/Lupo.jpg' },
+          { name: 'Pecora', img: 'img/Animali/Pecora.jpg' },
+          { name: 'Marmotta', img: 'img/Animali/Marmotta.jpg' },
+          { name: 'Scoiattolo', img: 'img/Animali/Scoiattolo.jpg' },
+          { name: 'Gallo cedrone', img: 'img/Animali/Gallo_cedrone.jpg' },
+          { name: 'Mucca', img: 'img/Animali/Mucca.jpg' }
+        ],
+        Piante: [
+          { name: 'Genzianella', img: 'img/Piante/genzianella.jpg', text: 'Genzianella' },
+          { name: 'Stella alpina', img: 'img/Piante/stellalpina.jpg', text: 'Stella alpina' },
+          { name: 'Mele', img: 'img/Piante/mele.jpg', text: 'Pomi' },
+          { name: 'Mirtilli', img: 'img/Piante/mirtilli.jpg', text: 'Giaseni' },
+          { name: 'Bottondoro', img: 'img/Piante/bottondoro.jpg', text: "Botton d'oro" },
+          { name: 'Rododendro', img: 'img/Piante/rododendro.jpg', text: 'Rododendri' },
+          { name: 'Uva', img: 'img/Piante/uva.jpg', text: 'Uva' },
+          { name: 'Prugne', img: 'img/Piante/prugne.jpg', text: 'Brugne' }
+        ]*/
+        "Attrezzi 1": [
+          {
+            name: 'Falze',
+            img: 'img/ATTREZZI-1/Falce.png',
+            textImg: 'img/ATTREZZI-1/falze scritta.png'
+          },
+          {
+            name: 'Manarotto',
+            img: 'img/ATTREZZI-1/Manarotto.png',
+            textImg: 'img/ATTREZZI-1/manarotto scritta.png'
+          },
+          {
+            name: 'Parolo',
+            img: 'img/ATTREZZI-1/Parolo.png',
+            textImg: 'img/ATTREZZI-1/parolo scritta.png'
+          },
+          {
+            name: 'Rastrelo',
+            img: 'img/ATTREZZI-1/Rastrelo.png',
+            textImg: 'img/ATTREZZI-1/rastrelo scritta.png'
+          },
+          {
+            name: 'Segon',
+            img: 'img/ATTREZZI-1/Segon.png',
+            textImg: 'img/ATTREZZI-1/segon scritta.png'
+          },
+          {
+            name: 'Zangola',
+            img: 'img/ATTREZZI-1/Zangola.png',
+            textImg: 'img/ATTREZZI-1/zangola scritta.png'
+          },
+          {
+            name: 'Baile',
+            img: 'img/ATTREZZI-1/Baile.png',
+            textImg: 'img/ATTREZZI-1/baile scritta.png'
+          },
+          {
+            name: 'Cargozo',
+            img: 'img/ATTREZZI-1/Cargozo.png',
+            textImg: 'img/ATTREZZI-1/cargozo scritta.png'
+          },
+        ],
+        "Attrezzi 2": [
+          {
+            name: 'Barela',
+            img: 'img/ATTREZZI-2/Barela.webp',
+            textImg: 'img/ATTREZZI-2/BARELASCRITTA.png'
+          },
+          {
+            name: 'Ciodi',
+            img: 'img/ATTREZZI-2/CIODI.jpeg',
+            textImg: 'img/ATTREZZI-2/SCRITTA CHIODI.png'
+          },
+          {
+            name: 'Bulone',
+            img: 'img/ATTREZZI-2/immagine bullone.png',
+            textImg: 'img/ATTREZZI-2/bulone scritta.png'
+          },
+          {
+            name: 'Forca',
+            img: 'img/ATTREZZI-2/forcaimmagine.jpg',
+            textImg: 'img/ATTREZZI-2/FORCA SCRITTA.png'
+          },
+          {
+            name: 'Mazoto',
+            img: 'img/ATTREZZI-2/mazzoto.webp',
+            textImg: 'img/ATTREZZI-2/mazoto scritta.png'
+          },
+          {
+            name: 'Rastrello',
+            img: 'img/ATTREZZI-2/RASTRELLO.jpg',
+            textImg: 'img/ATTREZZI-2/RASTRELO SCRITTA.png'
+          },
+          {
+            name: 'Tronchesin',
+            img: 'img/ATTREZZI-2/tronchesino immagine.webp',
+            textImg: 'img/ATTREZZI-2/TRONCHESIN SCRITTA.png'
+          },
+          {
+            name: 'Zappa',
+            img: 'img/ATTREZZI-2/zappa.jpg',
+            textImg: 'img/ATTREZZI-2/ZAPPA SCRITTA.png'
+          },
+        ],
+        Ortaggi: [
+          {
+            name: 'Fasoi',
+            img: 'img/ORTAGGI/ORTAGGI_FASOI_FOTO.png',
+            textImg: 'img/ORTAGGI/ORTAGGI_FASOI.png'
+          },
+          {
+            name: 'Peveroni',
+            img: 'img/ORTAGGI/ORTAGGI_PEVERONI_FOTO.png',
+            textImg: 'img/ORTAGGI/ORTAGGI_PEVERONI.png'
+          },
+          {
+            name: 'Ravanei',
+            img: 'img/ORTAGGI/ORTAGGI_RAVANEI_FOTO.png',
+            textImg: 'img/ORTAGGI/ORTAGGI_RAVANEI.png'
+          },
+          {
+            name: 'Salata',
+            img: 'img/ORTAGGI/ORTAGGI_SALATA_FOTO.png',
+            textImg: 'img/ORTAGGI/ORTAGGI_SALATA.png'
+          },
+          {
+            name: 'Ziola',
+            img: 'img/ORTAGGI/ORTAGGI_ZIOLA_FOTO.png',
+            textImg: 'img/ORTAGGI/ORTAGGI_ZIOLE.png'
+          },
+          {
+            name: 'Zucca',
+            img: 'img/ORTAGGI/ORTAGGI_ZUCA_FOTO.png',
+            textImg: 'img/ORTAGGI/ORTAGGI_ZUCA.png'
+          },
+          {
+            name: 'Zucati',
+            img: 'img/ORTAGGI/ORTAGGI_ZUCATI_FOTO.png',
+            textImg: 'img/ORTAGGI/ORTAGGI_ZUCATI.png'
+          },
+          {
+            name: 'Bisi',
+            img: 'img/ORTAGGI/ORTAGGI_BISI_FOTO.png',
+            textImg: 'img/ORTAGGI/ORTAGGI_BISI.png'
+          },
+        ],
+        Automobili: [
+          {
+            name: 'Alfa romeo giulia super',
+            img: 'img/AUTOMOBILI/Alfa_Romeo_Giulia_Super.jpg',
+            textImg: 'img/AUTOMOBILI/Alfa_Romeo_Giulia_Super_etichetta.jpg'
+          },
+          {
+            name: 'Bianchina',
+            img: 'img/AUTOMOBILI/Autobianchi_Bianchina.jpg',
+            textImg: 'img/AUTOMOBILI/Autobianchi_Bianchina_etichetta.jpg'
+          },
+          {
+            name: 'Primula',
+            img: 'img/AUTOMOBILI/Autobianchi_Primula.jpg',
+            textImg: 'img/AUTOMOBILI/Autobianchi_Primula_etichetta.jpg'
+          },
+          {
+            name: '500',
+            img: 'img/AUTOMOBILI/Fiat_500.jpg',
+            textImg: 'img/AUTOMOBILI/Fiat_500_etichetta.jpg'
+          },
+          {
+            name: '600',
+            img: 'img/AUTOMOBILI/Fiat_600.jpg',
+            textImg: 'img/AUTOMOBILI/Fiat_600_etichetta.jpg'
+          },
+          {
+            name: 'Innocenti mini',
+            img: 'img/AUTOMOBILI/Innocenti_Mini.jpg',
+            textImg: 'img/AUTOMOBILI/Innocenti_Mini_etichetta.jpg'
+          },
+          {
+            name: 'Fulvia',
+            img: 'img/AUTOMOBILI/Lancia_Fulvia.jpg',
+            textImg: 'img/AUTOMOBILI/Lancia_Fulvia_etichetta.jpg'
+          }, {
+            name: 'Renault4',
+            img: 'img/AUTOMOBILI/Renault_4.jpg',
+            textImg: 'img/AUTOMOBILI/Renault_4_etichetta.jpg'
+          },
+        ],
+        Funghi: [
+          {
+            name: 'Brisa',
+            img: 'img/FUNGHI/brisa.jpg',
+            textImg: 'img/FUNGHI/scritta.brisa.jpg'
+          },
+          {
+            name: 'Ciodini',
+            img: 'img/FUNGHI/ciodini.jpg',
+            textImg: 'img/FUNGHI/SCRITTA.CIODINI.jpg'
+          },
+          {
+            name: 'Finferli',
+            img: 'img/FUNGHI/finferli.jpg',
+            textImg: 'img/FUNGHI/scritta.finferli.jpg'
+          },
+          {
+            name: 'Fungo del pane',
+            img: 'img/FUNGHI/fungo.del.pane.jpg',
+            textImg: 'img/FUNGHI/scritta.fungo.del.pane.jpg'
+          },
+          {
+            name: 'Ombrelon',
+            img: 'img/FUNGHI/ombrelon.jpg',
+            textImg: 'img/FUNGHI/scritta.ombrelon.jpg'
+          },
+          {
+            name: 'Puina',
+            img: 'img/FUNGHI/puina.jpg',
+            textImg: 'img/FUNGHI/scritta.puina.jpg'
+          },
+          {
+            name: 'Segna brise',
+            img: 'img/FUNGHI/segnabrise.jpg',
+            textImg: 'img/FUNGHI/scritta.segnabrise.jpg'
+          }, {
+            name: 'Verdoni Moreli',
+            img: 'img/FUNGHI/verdoni.moreli.jpg',
+            textImg: 'img/FUNGHI/VERDONI.MORELI.SCRITTA.jpg'
+          },
+        ],
+        Indumenti: [
+          {
+            name: 'Calzoti',
+            img: 'img/INDUMENTI/calzoti-foto.png',
+            textImg: 'img/INDUMENTI/CALZOTI(1).png'
+          },
+          {
+            name: 'Camisa',
+            img: 'img/INDUMENTI/camisa-foto.png',
+            textImg: 'img/INDUMENTI/camisa(1).png'
+          },
+          {
+            name: 'Iacheta',
+            img: 'img/INDUMENTI/iacheta-foto.png',
+            textImg: 'img/INDUMENTI/IACHETA(1).png'
+          },
+          {
+            name: 'Manopole',
+            img: 'img/INDUMENTI/Monopole-foto.png',
+            textImg: 'img/INDUMENTI/MANOPOLE.png'
+          },
+          {
+            name: 'Ociai',
+            img: 'img/INDUMENTI/ociai-foto.png',
+            textImg: 'img/INDUMENTI/OCIAI(1).png'
+          },
+          {
+            name: 'Pastran',
+            img: 'img/INDUMENTI/pastran-foto.png',
+            textImg: 'img/INDUMENTI/pastran(1).png'
+          },
+          {
+            name: 'Recini',
+            img: 'img/INDUMENTI/recini-foto.png',
+            textImg: 'img/INDUMENTI/RECINI(1).png'
+          }, {
+            name: 'Zopele',
+            img: 'img/INDUMENTI/zopele-foto.png',
+            textImg: 'img/INDUMENTI/zopele(1).png'
+          },
+        ],
+        Latticini: [
+          {
+            name: 'Burro',
+            img: 'img/Cibo/burro.jpg',
+            textImg: 'img/Cibo/BURRO1.jpg'
+          },
+          {
+            name: 'Formai',
+            img: 'img/Cibo/formai.jpg',
+            textImg: 'img/Cibo/FORMAI1.jpg'
+          },
+          {
+            name: 'Grana',
+            img: 'img/Cibo/grana.jpg',
+            textImg: 'img/Cibo/GRANA1.jpg'
+          },
+          {
+            name: 'Latte',
+            img: 'img/Cibo/latte.jpg',
+            textImg: 'img/Cibo/LATTE1.jpg'
+          },
+          {
+            name: 'Panna',
+            img: 'img/Cibo/panna.jpg',
+            textImg: 'img/Cibo/PANNA1.jpg'
+          },
+          {
+            name: 'Ricotta',
+            img: 'img/Cibo/ricotta.jpg',
+            textImg: 'img/Cibo/RICOTTA1.jpg'
+          },
+          {
+            name: 'Tosella',
+            img: 'img/Cibo/tosella.jpg',
+            textImg: 'img/Cibo/TOSELLA1.jpg'
+          }, {
+            name: 'Yogurt',
+            img: 'img/Cibo/yogurt.jpg',
+            textImg: 'img/Cibo/YOGURT1.jpg'
+          },
+        ],
+        Edifici: [
+          {
+            name: 'Baito',
+            img: 'img/Locations/baito_img.jpg',
+            textImg: 'img/Locations/baito_scirtta.jpg'
+          },
+          {
+            name: 'Bekar',
+            img: 'img/Locations/macelleria_img.jpg',
+            textImg: 'img/Locations/bekar_scritta.jpg'
+          },
+          {
+            name: 'Botega',
+            img: 'img/Locations/coop_img.jpg',
+            textImg: 'img/Locations/botega_scritta.jpg'
+          },
+          {
+            name: 'Caneva',
+            img: 'img/Locations/caneva_img.jpg',
+            textImg: 'img/Locations/caneva_scritta.jpg'
+          },
+          {
+            name: 'Castel',
+            img: 'img/Locations/castello_img.jpg',
+            textImg: 'img/Locations/castel_scritta.jpg'
+          },
+          {
+            name: 'Cesa',
+            img: 'img/Locations/chiesa_img.jpg',
+            textImg: 'img/Locations/cesa_scritta.jpg'
+          },
+          {
+            name: 'Scola',
+            img: 'img/Locations/scuole_img.jpg',
+            textImg: 'img/Locations/scola_scritta.jpg'
+          }, {
+            name: 'Tabachin',
+            img: 'img/Locations/tabacchino_img.jpg',
+            textImg: 'img/Locations/TABACHIN_scritta.jpg'
+          },
+        ],
+        Fiumi: [
+          {
+            name: 'Cepena',
+            img: 'img/Fiumi/cepena.png',
+            textImg: 'img/Fiumi/CEPENASCRITTA.jpg'
+          },
+          {
+            name: 'Brenta',
+            img: 'img/Fiumi/brenta.png',
+            textImg: 'img/Fiumi/BRENTASCRITTA.jpg'
+          },
+          {
+            name: 'Ceggio',
+            img: 'img/Fiumi/ceggio.png',
+            textImg: 'img/Fiumi/CEGGIOSCRITTA.jpg'
+          },
+          {
+            name: 'Fersina',
+            img: 'img/Fiumi/fersina.png',
+            textImg: 'img/Fiumi/FERSINASCRITTA.jpg'
+          },
+          {
+            name: 'Grigno',
+            img: 'img/Fiumi/grigno.png',
+            textImg: 'img/Fiumi/GRIGNOSCRITTA.jpg'
+          },
+          {
+            name: 'Maso',
+            img: 'img/Fiumi/maso.png',
+            textImg: 'img/Fiumi/MASOSCRITTA.jpg'
+          },
+          {
+            name: 'Moggio',
+            img: 'img/Fiumi/moggio.png',
+            textImg: 'img/Fiumi/MOGGIOSCRITTA.jpg'
+          },
+          {
+            name: 'Solcena',
+            img: 'img/Fiumi/solcena.png',
+            textImg: 'img/Fiumi/SOLCENASCRITTA.jpg'
+          },
+        ],
+      };
+
+      function createMenu() {
+        const menuGrid = document.getElementById("menuGrid");
+
+        menuGrid.innerHTML = "";
+
+        Object.keys(sets).forEach(key => {
+          const btn = document.createElement("button");
+
+          btn.textContent = key;
+
+          btn.onclick = () => startSet(key);
+
+          menuGrid.appendChild(btn);
+        });
+      }
+
+      function goBackToMenu() {
+        document.getElementById("menuStart").style.display = "flex";
+        document.getElementById("content").style.display = "none";
+        document.getElementById("timer").style.display = "none";
+        document.getElementById("backBtn").style.display = "none";
+        document.getElementById("restart").style.display = "none";
+
+        stopTimer();
+
+
+        // reset sfondo
+        document.body.className = "";
+      }
+
+      document.getElementById("backBtn").onclick = goBackToMenu;
+
+      let cardsData = [];
+      let currentSet = '';
+
+      function slug(s) {
+        return s.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      }
+
+
+      // poi nella startSet:
+      function startSet(key) {
+        currentSet = key;
+        cardsData = sets[key];
+        
+
+        document.getElementById("menuStart").style.display = "none";
+        document.getElementById("content").style.display = "flex";
+        document.getElementById("timer").style.display = "block";
+        document.getElementById("backBtn").style.display = "block";
+        document.getElementById("restart").style.display = "block";
+
+        initGame();
+      }
+
+      let grid = document.getElementById('grid');
+      let timerDisplay = document.getElementById('timer');
+
+      let restartBtn = document.getElementById('restart');
+
+      let first = null, second = null, lock = false, matches = 0, seconds = 0, timerInterval = null, timerStarted = false;
+
+      const flipSound = new Audio('sounds/flip.mp3');
+      const matchSound = new Audio('sounds/match.mp3');
+      const winSound = new Audio('sounds/win.mp3');
+
+      function playSound(s) { s.currentTime = 0; s.play(); }
+
+      function startTimer() {
+        stopTimer();
+        timerInterval = setInterval(() => {
+          seconds++;
+          timerDisplay.textContent = `${seconds}s`;
+        }, 1000);
+        timerStarted = true;
+      }
+
+      function stopTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerStarted = false;
+      }
+
+      function saveRecord(name, time) {
+        let records = JSON.parse(localStorage.getItem('records')) || [];
+        records.push({ name, time });
+        records.sort((a, b) => a.time - b.time);
+        records = records.slice(0, 10);
+        localStorage.setItem('records', JSON.stringify(records));
+      }
+
+      function loadRecords() {
+        let records = JSON.parse(localStorage.getItem('records')) || [];
+        let list = document.getElementById('recordsList');
+        list.innerHTML = "";
+        records.forEach((r, i) => {
+          let li = document.createElement('li');
+          li.textContent = `${i + 1}) ${r.name} - ${r.time}s`;
+          list.appendChild(li);
+        });
+      }
+
+      function clearRecords() {
+        localStorage.removeItem('records');
+        loadRecords();
+      }
+
+      function initGame() {
+        grid.innerHTML = '';
+
+        first = null;
+        second = null;
+        lock = false;
+        matches = 0;
+        seconds = 0;
+
+        timerDisplay.textContent = '0s';
+
+        stopTimer();
+
+        let deck = [];
+
+        // PER TUTTI I SET:
+        // 8 carte immagine + 8 carte scritta
+        cardsData.forEach(c => {
+          deck.push({
+            type: 'img',
+            name: c.name,
+            content: c.img
+          });
+
+          deck.push({
+            type: 'textImg',
+            name: c.name,
+            content: c.textImg
+          });
+        });
+
+        // Mischia
+        deck.sort(() => Math.random() - 0.5);
+
+        deck.forEach(card => {
+
+          const el = document.createElement('div');
+          el.className = 'card';
+          el.dataset.name = card.name;
+
+          const inner = document.createElement('div');
+          inner.className = 'card-inner';
+
+          // Fronte
+          const front = document.createElement('div');
+          front.className = 'card-front';
+          front.textContent = '';
+
+          // Retro
+          const back = document.createElement('div');
+          back.className = 'card-back';
+
+          back.innerHTML = `
+            <img src="${card.content}" alt="${card.name}">
+          `;
+
+          inner.appendChild(front);
+          inner.appendChild(back);
+
+          el.appendChild(inner);
+
+          el.onclick = () => {
+
+            if (lock ||
+              el === first ||
+              el.classList.contains('flipped')) return;
+
+            if (!timerStarted) startTimer();
+
+            playSound(flipSound);
+
+            el.classList.add('flipped');
+
+            if (!first) {
+              first = el;
+              return;
+            }
+
+            second = el;
+            lock = true;
+
+            // MATCH
+            if (first.dataset.name === second.dataset.name) {
+
+              playSound(matchSound);
+
+              matches++;
+
+              first = null;
+              second = null;
+
+              lock = false;
+
+              // VITTORIA
+              if (matches === cardsData.length) {
+
+                stopTimer();
+
+                playSound(winSound);
+
+                let name = prompt("Hai vinto! Inserisci il tuo nome:");
+
+                if (!name || !name.trim()) {
+                  name = "Anonimo";
+                }
+
+                saveRecord(name, seconds);
+
+                loadRecords();
+
+                document
+                  .querySelectorAll('.card')
+                  .forEach(c => c.style.pointerEvents = "none");
+              }
+
+            } else {
+
+              setTimeout(() => {
+
+                first.classList.remove('flipped');
+                second.classList.remove('flipped');
+
+                first = null;
+                second = null;
+
+                lock = false;
+
+              }, 900);
+            }
+          };
+
+          grid.appendChild(el);
+        });
+      }
+
+      document.getElementById('clearRecords').onclick = clearRecords;
+      loadRecords();
+
+      restartBtn.onclick = initGame;
+
+      const infoBtn = document.getElementById("infoBtn");
+      const infoPopup = document.getElementById("infoPopup");
+      const closeInfo = document.getElementById("closeInfo");
+
+      infoBtn.onclick = () => {
+        infoPopup.style.transform = "translateY(0)";
+        infoBtn.style.opacity = "0";
+        infoBtn.style.pointerEvents = "none";
+      };
+
+      closeInfo.onclick = () => {
+        infoPopup.style.transform = "translateY(120%)";
+        infoBtn.style.opacity = "1";
+        infoBtn.style.pointerEvents = "auto";
+      };
+      document.getElementById("timer").style.display = "none";
+
+      createMenu();
+    </script>
+</body>
+
+</html>
