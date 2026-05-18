@@ -469,7 +469,7 @@
 
     <script>
       const sets = {
-        /*Cibo: [
+        Cibo: [
           { name: 'Polenta', img: 'img/Cibi_tipici/Polenta.JPG' },
           { name: 'Canederli', img: 'img/Cibi_tipici/Canederli.JPG' },
           { name: 'Crauti', img: 'img/Cibi_tipici/Crauti.JPG' },
@@ -508,7 +508,7 @@
           { name: 'Rododendro', img: 'img/Piante/rododendro.jpg', text: 'Rododendri' },
           { name: 'Uva', img: 'img/Piante/uva.jpg', text: 'Uva' },
           { name: 'Prugne', img: 'img/Piante/prugne.jpg', text: 'Brugne' }
-        ]*/
+        ],
         "Attrezzi 1": [
           {
             name: 'Falze',
@@ -518,7 +518,7 @@
           {
             name: 'Manarotto',
             img: 'img/ATTREZZI-1/Manarotto.png',
-            textImg: 'img/ATTREZZI-1/manarotto scritta.png'
+            textImg: 'img/ATTREZZI-1/CURTELAZIN_SCRITTA.png'
           },
           {
             name: 'Parolo',
@@ -547,14 +547,14 @@
           },
           {
             name: 'Cargozo',
-            img: 'img/ATTREZZI-1/Cargozo.png',
+            img: 'img/ATTREZZI-1/cargozo.png',
             textImg: 'img/ATTREZZI-1/cargozo scritta.png'
           },
         ],
         "Attrezzi 2": [
           {
             name: 'Barela',
-            img: 'img/ATTREZZI-2/Barela.webp',
+            img: 'img/ATTREZZI-2/barela.webp',
             textImg: 'img/ATTREZZI-2/BARELASCRITTA.png'
           },
           {
@@ -926,18 +926,23 @@
 
       // poi nella startSet:
       function startSet(key) {
-        currentSet = key;
-        cardsData = sets[key];
-        
+		currentSet = key;
+		cardsData = sets[key];
 
-        document.getElementById("menuStart").style.display = "none";
-        document.getElementById("content").style.display = "flex";
-        document.getElementById("timer").style.display = "block";
-        document.getElementById("backBtn").style.display = "block";
-        document.getElementById("restart").style.display = "block";
+		// torna in cima alla pagina
+		window.scrollTo({
+			top: 0,
+			behavior: "auto"
+		});
 
-        initGame();
-      }
+		document.getElementById("menuStart").style.display = "none";
+		document.getElementById("content").style.display = "flex";
+		document.getElementById("timer").style.display = "block";
+		document.getElementById("backBtn").style.display = "block";
+		document.getElementById("restart").style.display = "block";
+
+		initGame();
+		}
 
       let grid = document.getElementById('grid');
       let timerDisplay = document.getElementById('timer');
@@ -1008,18 +1013,41 @@
         // PER TUTTI I SET:
         // 8 carte immagine + 8 carte scritta
         cardsData.forEach(c => {
-          deck.push({
-            type: 'img',
-            name: c.name,
-            content: c.img
-          });
 
-          deck.push({
-            type: 'textImg',
-            name: c.name,
-            content: c.textImg
-          });
-        });
+			// SET FOTO + SCRITTA
+			if (c.textImg) {
+
+			deck.push({
+				type: 'img',
+				name: c.name,
+				content: c.img
+			});
+
+			deck.push({
+				type: 'textImg',
+				name: c.name,
+				content: c.textImg
+			});
+
+			}
+
+			// SET FOTO + FOTO
+			else {
+
+			deck.push({
+				type: 'img',
+				name: c.name,
+				content: c.img
+			});
+
+			deck.push({
+				type: 'img',
+				name: c.name,
+				content: c.img
+			});
+
+			}
+			});
 
         // Mischia
         deck.sort(() => Math.random() - 0.5);
